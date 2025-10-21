@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión - Joystick MQTT Controller</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <link rel="stylesheet" href="/main/style.css">
+    <link rel="stylesheet" href="/gestion/style.css">
+</head>
+<body>
+    <!-- Menú de navegación superior -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-logo">Sistema EITD</div>
+            <ul class="nav-menu">
+              <li><a href="/success" class="nav-link">Inicio</a></li>
+              <li><a href="/basedatos" class="nav-link">Base de datos</a></li>
+              <li><a href="/monitoreo" class="nav-link">Monitoreo</a></li>
+              <li><a href="/gestion" class="nav-link active">Gestión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="controller">
+        <div class="controller-header">
+            <h2>Joystick MQTT Controller</h2>
+            <p class="controller-subtitle">Control remoto mediante MQTT</p>
+        </div>
+        
+        <div class="connection-section">
+            <input type="text" id="topicInput" placeholder="Tema MQTT (ej: carro/control)" value="carro/control">
+            <button id="connectBtn" class="btn-connect">Conectar al Broker</button>
+            <div id="connectionStatus" class="status-disconnected">● Desconectado</div>
+        </div>
+        
+        <div class="joystick-container">
+            <h3>Control</h3>
+            <div id="joystick">
+                <div id="joystickKnob"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Lógica MQTT ---
+        let client = null;
+        const connectionStatus = document.getElementById('connectionStatus');
+        const topicInput = document.getElementById('topicInput');
+        const connectBtn = document.getElementById('connectBtn');
+
+        // URL del Broker MQTT (usando WebSockets, puerto 8080)
+        const brokerUrl = 'ws://test.mosquitto.org:8080';
+
+        connectBtn.addEventListener('click', connectMQTT);
+
+        function connectMQTT() {
+            if (client && client.connected) {
+                client.end(); // Desconectar si ya está conectado
+            }
+
+            const clientId = 'mqtt_js_' + Math.random().toString(16).substr(2, 8);
+            const options = {
+                clientId: clientId,
+                keepalive: 60,
+                reconnectPeriod: 1000,
+            };
+
+            connectionStatus.textContent = '● Conectando...';
+            connectionStatus.className = 'status-connecting';
+            
+            // Conectar al broker
+            client = mqtt.connect(brokerUrl, options);
+
+            client.on('connect', () => {
+                connectionStatus.textContent = '● Conectado';
+                connectionStatus.className = 'status-connected';
+                console.log('Conectado al broker MQTT');
+            });
+
+            client.on('close', () => {
+                connectionStatus.textContent = '● Desconectado';
+                connectionStatus.className = 'status-disconnected';
+                console.log('Desconectado del broker MQTT');
+            });
+
+            client.on('error', (err) => {
+                console.error('Error de conexión MQTT:', err);
+                connectionStatus.textContent = '● Error de conexión';
+                connectionStatus.className = 'status-error';
+                client.end();
+            });
+        }
+
+        // Función para publicar mensajes
+        function publishMessage(message) {
+            if (client && client.connected) {
+                const topic = topicInput.value;
+                if (!topic) {
+                    alert('Por favor ingresa un Tema MQTT');
+                    return;
+                }
+                client.publish(topic, JSON.stringify(message), { qos: 0, retain: false });
+            } else {
+                console.warn('No estás conectado al broker MQTT. Mensaje no enviado.');
+            }
+        }
+
+        // --- Lógica del Joystick ---
+
+        const joystick = document.getElementById('joystick');
+        const joystickKnob = document.getElementById('joystickKnob');
+        let isDragging = false;
+
+        joystickKnob.addEventListener('mousedown', startDragging);
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('mouseup', stopDragging);
+
+        joystickKnob.addEventListener('touchstart', startDragging);
+        document.addEventListener('touchmove', drag);
+        document.addEventListener('touchend', stopDragging);
+
+        function startDragging(e) {
+            isDragging = true;
+            e.preventDefault();
+        }
+
+        function stopDragging() {
+            if (isDragging) {
+                isDragging = false;
+                joystickKnob.style.left = '75px';
+                joystickKnob.style.top = '75px';
+                
+                publishMessage({ direction: 'stop' });
+            }
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+
+            const joystickRect = joystick.getBoundingClientRect();
+            const centerX = joystickRect.left + joystickRect.width / 2;
+            const centerY = joystickRect.top + joystickRect.height / 2;
+
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+
+            if (!clientX || !clientY) return;
+
+            const deltaX = clientX - centerX;
+            const deltaY = clientY - centerY;
+
+            const maxDistance = 75;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const angle = Math.atan2(deltaY, deltaX);
+
+            const limitedX = Math.cos(angle) * Math.min(distance, maxDistance);
+            const limitedY = Math.sin(angle) * Math.min(distance, maxDistance);
+
+            joystickKnob.style.left = `${75 + limitedX}px`;
+            joystickKnob.style.top = `${75 + limitedY}px`;
+
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) publishMessage({ direction: 'right' });
+                else publishMessage({ direction: 'left' });
+            } else {
+                if (deltaY > 0) publishMessage({ direction: 'down' });
+                else publishMessage({ direction: 'up' });
+            }
+        }
+    </script>
+</body>
+</html>

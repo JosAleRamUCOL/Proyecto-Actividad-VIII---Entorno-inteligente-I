@@ -1,0 +1,432 @@
+/* Estilos específicos para la página de Monitoreo */
+
+.monitoring-container {
+    max-width: 1200px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.8s ease;
+}
+
+.monitoring-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #f0f0f0;
+}
+
+.monitoring-header h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.monitoring-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* Sección de conexión */
+.connection-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.connection-inputs {
+    display: flex;
+    gap: 15px;
+    flex: 1;
+    flex-wrap: wrap;
+}
+
+#topicInput {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#topicInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-connect {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-connect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-connect.btn-disconnect {
+    background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+    box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3);
+}
+
+.btn-connect.btn-disconnect:hover {
+    box-shadow: 0 6px 20px rgba(245, 101, 101, 0.4);
+}
+
+/* Estados de conexión */
+#connectionStatus {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.status-disconnected {
+    background: #fee;
+    color: #c53030;
+}
+
+.status-connecting {
+    background: #fef5e7;
+    color: #d68910;
+}
+
+.status-connected {
+    background: #e6ffed;
+    color: #22543d;
+}
+
+.status-error {
+    background: #fee;
+    color: #c53030;
+}
+
+/* Grid de métricas */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+
+.metric-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    border-left: 6px solid transparent;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.temperature-card {
+    border-left-color: #f56565;
+}
+
+.temperature-card .metric-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.pressure-card {
+    border-left-color: #4299e1;
+}
+
+.pressure-card .metric-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.metric-label {
+    color: #718096;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+}
+
+.metric-value {
+    font-size: 3rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 5px;
+}
+
+.metric-unit {
+    color: #a0aec0;
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+.metric-timestamp {
+    color: #cbd5e0;
+    font-size: 0.85rem;
+    font-style: italic;
+}
+
+/* Sección de estadísticas */
+.stats-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    padding: 30px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+}
+
+.stats-section h3 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    text-align: center;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.stat-item {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 0.85rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-value {
+    color: #2d3748;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.stat-time {
+    font-size: 1.2rem;
+    color: #667eea;
+}
+
+/* Sección de log */
+.log-section {
+    background: #2d3748;
+    padding: 25px;
+    border-radius: 15px;
+    color: white;
+}
+
+.log-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4a5568;
+}
+
+.log-header h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin: 0;
+}
+
+.btn-clear {
+    padding: 8px 20px;
+    background: #fc8181;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+    background: #f56565;
+    transform: scale(1.05);
+}
+
+.message-log {
+    max-height: 300px;
+    overflow-y: auto;
+    background: #1a202c;
+    padding: 15px;
+    border-radius: 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+.message-log::-webkit-scrollbar {
+    width: 8px;
+}
+
+.message-log::-webkit-scrollbar-track {
+    background: #2d3748;
+    border-radius: 10px;
+}
+
+.message-log::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 10px;
+}
+
+.log-entry {
+    padding: 8px 12px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    border-left: 3px solid transparent;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.log-time {
+    color: #a0aec0;
+    margin-right: 10px;
+}
+
+.log-info {
+    background: #2c5282;
+    border-left-color: #4299e1;
+}
+
+.log-success {
+    background: #276749;
+    border-left-color: #48bb78;
+}
+
+.log-warning {
+    background: #744210;
+    border-left-color: #ed8936;
+}
+
+.log-error {
+    background: #742a2a;
+    border-left-color: #fc8181;
+}
+
+.log-data {
+    background: #44337a;
+    border-left-color: #9f7aea;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .monitoring-container {
+        margin: 20px;
+        padding: 25px;
+    }
+
+    .monitoring-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .connection-section {
+        flex-direction: column;
+    }
+
+    .connection-inputs {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    #topicInput {
+        width: 100%;
+    }
+
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .metric-value {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .monitoring-container {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .monitoring-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .metric-value {
+        font-size: 2rem;
+    }
+
+    .log-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .btn-clear {
+        width: 100%;
+    }
+}

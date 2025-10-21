@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="/auth/style.css">
+</head>
+<body>
+  <div class="login-container">
+    <h2>Iniciar Sesión</h2>
+    <form id="loginForm">
+      <input type="text" id="username" placeholder="Usuario" required>
+      <input type="password" id="password" placeholder="Contraseña" required>
+      <button type="submit">Entrar</button>
+      <p id="errorMessage" class="error"></p>
+    </form>
+
+    <button id="goToRegister" class="changeTo">Regístrate</button>
+  </div>
+
+  <script src="/auth/script.js"></script>
+</body>
+</html>

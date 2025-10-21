@@ -1,0 +1,186 @@
+ (routes 
+  (resolution mm 100000)
+  (parser
+  )
+  (parser
+  )
+  (structure_out
+   (layer TOP (type signal)
+   )
+   (layer I1 (type signal)
+   )
+   (layer I2 (type signal)
+   )
+   (layer I3 (type signal)
+   )
+   (layer I4 (type signal)
+   )
+   (layer I5 (type signal)
+   )
+   (layer I6 (type signal)
+   )
+   (layer I7 (type signal)
+   )
+   (layer I8 (type signal)
+   )
+   (layer I9 (type signal)
+   )
+   (layer I10 (type signal)
+   )
+   (layer I11 (type signal)
+   )
+   (layer I12 (type signal)
+   )
+   (layer I13 (type signal)
+   )
+   (layer I14 (type signal)
+   )
+   (layer BOT (type signal)
+   )
+  )
+  (library_out
+  (padstack $VIA#0_SIGNAL
+   (shape (circ TOP 76200 0 0))
+   (shape (circ I1 76200 0 0))
+   (shape (circ I2 76200 0 0))
+   (shape (circ I3 76200 0 0))
+   (shape (circ I4 76200 0 0))
+   (shape (circ I5 76200 0 0))
+   (shape (circ I6 76200 0 0))
+   (shape (circ I7 76200 0 0))
+   (shape (circ I8 76200 0 0))
+   (shape (circ I9 76200 0 0))
+   (shape (circ I10 76200 0 0))
+   (shape (circ I11 76200 0 0))
+   (shape (circ I12 76200 0 0))
+   (shape (circ I13 76200 0 0))
+   (shape (circ I14 76200 0 0))
+   (shape (circ BOT 76200 0 0))
+  )
+  )
+  (network_out
+   (Net 3V3 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -3770000 -5190000 -3429000 -2159000 -3429000
+     -2159000 -9715500 -3750000 -9715500 -3750000 -9504121)
+    (connect (terminal pin ESP1-0) (terminal pin 1278-0))
+   )
+   )
+   (Net DIO0 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -7072000 -3750000 -7072000 -3750000 -8742121)
+    (connect (terminal pin ESP1-13) (terminal pin 1278-3))
+   )
+   )
+   (Net GND 
+   (rule
+   )
+   (wire (path TOP 101600  -3500000 -9504121 -2413000 -9504121 -2413000 -3556000
+     -4318958 -3556000 -4318958 -4024000 -5190000 -4024000)
+    (connect (terminal pin SX-3) (terminal pin ESP1-1))
+   )
+   (wire (path TOP 101600  -6050000 -1456000 -5397500 -1456000 -5397500 -2498000)
+    (connect (terminal pin SIM800L-1) (terminal wire))
+   )
+   (wire (path TOP 101600  -5397500 -2498000 -5397500 -2997485 -5461000 -2997485
+     -5461000 -4024000 -5190000 -4024000)
+    (connect (terminal wire) (terminal pin ESP1-1))
+   )
+   (wire (path TOP 101600  -2080000 -2498000 -1714500 -2498000 -1714500 -1482000
+     -2080000 -1482000)
+    (connect (terminal pin FUENTE_EXTERNA-5) (terminal pin FUENTE_EXTERNA-1))
+   )
+   (wire (path TOP 101600  -2286000 -2498000 -5397500 -2498000)
+    (connect (terminal wire) (terminal wire))
+   )
+   (wire (path TOP 101600  -6050000 -1456000 -6413500 -1456000 -6413500 -2472000
+     -6050000 -2472000)
+    (connect (terminal pin SIM800L-1) (terminal pin SIM800L-5))
+   )
+   (wire (path TOP 101600  -2286000 -2498000 -2080000 -2498000)
+    (connect (terminal wire) (terminal pin FUENTE_EXTERNA-5))
+    (attr bus)
+   )
+   )
+   (Net MISO 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -6056000 -3500000 -6056000 -3500000 -8742121)
+    (connect (terminal pin ESP1-9) (terminal pin SX-0))
+   )
+   )
+   (Net MOSI 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -7326000 -5190000 -8996121 -3750000 -8996121)
+    (connect (terminal pin ESP1-14) (terminal pin 1278-2))
+   )
+   )
+   (Net NSS 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -5548000 -5461000 -5548000 -5461000 -9250121
+     -3750000 -9250121)
+    (connect (terminal pin ESP1-7) (terminal pin 1278-1))
+   )
+   )
+   (Net RST 
+   (rule
+   )
+   (wire (path TOP 101600  -3500000 -9250121 -3175000 -9250121 -3175000 -4785999
+     -2650000 -4785999)
+    (connect (terminal pin SX-2) (terminal pin ESP1-25))
+   )
+   )
+   (Net RXD 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -5294000 -5842000 -5294000 -5842000 -2218000
+     -6050000 -2218000)
+    (connect (terminal pin ESP1-6) (terminal pin SIM800L-4))
+   )
+   )
+   (Net SCK 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -5802000 -3302000 -5802000 -3302000 -8996121
+     -3500000 -8996121)
+    (connect (terminal pin ESP1-8) (terminal pin SX-1))
+   )
+   )
+   (Net TXD 
+   (rule
+   )
+   (wire (path TOP 101600  -5190000 -5040000 -5715000 -5040000 -5715000 -1964000
+     -6050000 -1964000)
+    (connect (terminal pin ESP1-5) (terminal pin SIM800L-3))
+   )
+   )
+   (Net VACIO 
+   (rule
+   )
+   (wire (path TOP 152400  -2080000 -1990000 -2080000 -2244000)
+    (connect (terminal pin FUENTE_EXTERNA-3) (terminal pin FUENTE_EXTERNA-4))
+    (type protect)
+   )
+   (wire (path TOP 152400  -2080000 -1736000 -2080000 -1990000)
+    (connect (terminal pin FUENTE_EXTERNA-2) (terminal pin FUENTE_EXTERNA-3))
+    (type protect)
+   )
+   )
+   (Net VCC_SIM800L 
+   (rule
+   )
+   (wire (path TOP 101600  -6050000 -1202000 -5588000 -1202000 -5588000 -1228000
+     -2080000 -1228000)
+    (connect (terminal pin SIM800L-0) (terminal pin FUENTE_EXTERNA-0))
+   )
+   )
+   (Net VDD 
+   (rule
+   )
+   )
+  )
+ )
