@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión - Joystick MQTT Controller</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="/main/style.css">
     <link rel="stylesheet" href="/gestion/style.css">
 </head>
@@ -24,7 +26,7 @@
 
     <div class="controller">
         <div class="controller-header">
-            <h2>Joystick MQTT Controller</h2>
+            <h2>Controlador MQTT</h2>
             <p class="controller-subtitle">Control remoto mediante MQTT</p>
         </div>
         
@@ -34,140 +36,60 @@
             <div id="connectionStatus" class="status-disconnected">● Desconectado</div>
         </div>
         
-        <div class="joystick-container">
-            <h3>Control</h3>
-            <div id="joystick">
-                <div id="joystickKnob"></div>
+        <!-- Pestañas para alternar entre Joystick, Mapa y Seguimiento de Línea -->
+        <div class="tabs-container">
+            <button class="tab active" data-tab="joystick-tab">Control Joystick</button>
+            <button class="tab" data-tab="map-tab">Selección de Ubicación</button>
+            <button class="tab" data-tab="line-tracking-tab">Seguimiento de Línea</button>
+        </div>
+        
+        <!-- Contenido de la pestaña Joystick -->
+        <div id="joystick-tab" class="tab-content active">
+            <div class="joystick-container">
+                <h3>Control</h3>
+                <div id="joystick">
+                    <div id="joystickKnob"></div>
+                </div>
+                <p class="joystick-help">Arrastra el joystick para controlar la dirección</p>
+            </div>
+        </div>
+        
+        <!-- Contenido de la pestaña Mapa -->
+        <div id="map-tab" class="tab-content">
+            <div class="map-section">
+                <h3>Selección de Ubicación</h3>
+                <div class="map-container">
+                    <div id="map"></div>
+                    <div class="location-info">
+                        <h4>Información de Ubicación</h4>
+                        <p><strong>Latitud:</strong> <span id="lat">-</span></p>
+                        <p><strong>Longitud:</strong> <span id="lng">-</span></p>
+                        <p><strong>Hora GMT:</strong> <span id="gmtTime">-</span></p>
+                        <p><strong>Fecha:</strong> <span id="date">-</span></p>
+                        <p><strong>Orientación (grados):</strong> <span id="orientation">-</span></p>
+                        <button id="sendLocation" class="btn-send">Enviar Ubicación por MQTT</button>
+                    </div>
+                </div>
+                <p class="joystick-help">Arrastra el marcador en el mapa para seleccionar una ubicación</p>
+            </div>
+        </div>
+        
+        <!-- Contenido de la pestaña Seguimiento de Línea -->
+        <div id="line-tracking-tab" class="tab-content">
+            <div class="line-tracking-container">
+                <h3>Seguimiento de Línea</h3>
+                <div class="tracking-toggle">
+                    <span class="toggle-label">Seguimiento de Línea:</span>
+                    <button id="lineTrackingToggle" class="toggle-btn"></button>
+                </div>
+                <div id="trackingStatus" class="toggle-status status-off">DESACTIVADO</div>
+                <p class="joystick-help">Activa o desactiva el modo de seguimiento de línea</p>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- Lógica MQTT ---
-        let client = null;
-        const connectionStatus = document.getElementById('connectionStatus');
-        const topicInput = document.getElementById('topicInput');
-        const connectBtn = document.getElementById('connectBtn');
-
-        // URL del Broker MQTT (usando WebSockets, puerto 8080)
-        const brokerUrl = 'ws://test.mosquitto.org:8080';
-
-        connectBtn.addEventListener('click', connectMQTT);
-
-        function connectMQTT() {
-            if (client && client.connected) {
-                client.end(); // Desconectar si ya está conectado
-            }
-
-            const clientId = 'mqtt_js_' + Math.random().toString(16).substr(2, 8);
-            const options = {
-                clientId: clientId,
-                keepalive: 60,
-                reconnectPeriod: 1000,
-            };
-
-            connectionStatus.textContent = '● Conectando...';
-            connectionStatus.className = 'status-connecting';
-            
-            // Conectar al broker
-            client = mqtt.connect(brokerUrl, options);
-
-            client.on('connect', () => {
-                connectionStatus.textContent = '● Conectado';
-                connectionStatus.className = 'status-connected';
-                console.log('Conectado al broker MQTT');
-            });
-
-            client.on('close', () => {
-                connectionStatus.textContent = '● Desconectado';
-                connectionStatus.className = 'status-disconnected';
-                console.log('Desconectado del broker MQTT');
-            });
-
-            client.on('error', (err) => {
-                console.error('Error de conexión MQTT:', err);
-                connectionStatus.textContent = '● Error de conexión';
-                connectionStatus.className = 'status-error';
-                client.end();
-            });
-        }
-
-        // Función para publicar mensajes
-        function publishMessage(message) {
-            if (client && client.connected) {
-                const topic = topicInput.value;
-                if (!topic) {
-                    alert('Por favor ingresa un Tema MQTT');
-                    return;
-                }
-                client.publish(topic, JSON.stringify(message), { qos: 0, retain: false });
-            } else {
-                console.warn('No estás conectado al broker MQTT. Mensaje no enviado.');
-            }
-        }
-
-        // --- Lógica del Joystick ---
-
-        const joystick = document.getElementById('joystick');
-        const joystickKnob = document.getElementById('joystickKnob');
-        let isDragging = false;
-
-        joystickKnob.addEventListener('mousedown', startDragging);
-        document.addEventListener('mousemove', drag);
-        document.addEventListener('mouseup', stopDragging);
-
-        joystickKnob.addEventListener('touchstart', startDragging);
-        document.addEventListener('touchmove', drag);
-        document.addEventListener('touchend', stopDragging);
-
-        function startDragging(e) {
-            isDragging = true;
-            e.preventDefault();
-        }
-
-        function stopDragging() {
-            if (isDragging) {
-                isDragging = false;
-                joystickKnob.style.left = '75px';
-                joystickKnob.style.top = '75px';
-                
-                publishMessage({ direction: 'stop' });
-            }
-        }
-
-        function drag(e) {
-            if (!isDragging) return;
-
-            const joystickRect = joystick.getBoundingClientRect();
-            const centerX = joystickRect.left + joystickRect.width / 2;
-            const centerY = joystickRect.top + joystickRect.height / 2;
-
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-
-            if (!clientX || !clientY) return;
-
-            const deltaX = clientX - centerX;
-            const deltaY = clientY - centerY;
-
-            const maxDistance = 75;
-            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-            const angle = Math.atan2(deltaY, deltaX);
-
-            const limitedX = Math.cos(angle) * Math.min(distance, maxDistance);
-            const limitedY = Math.sin(angle) * Math.min(distance, maxDistance);
-
-            joystickKnob.style.left = `${75 + limitedX}px`;
-            joystickKnob.style.top = `${75 + limitedY}px`;
-
-            if (Math.abs(deltaX) > Math.abs(deltaY)) {
-                if (deltaX > 0) publishMessage({ direction: 'right' });
-                else publishMessage({ direction: 'left' });
-            } else {
-                if (deltaY > 0) publishMessage({ direction: 'down' });
-                else publishMessage({ direction: 'up' });
-            }
-        }
-    </script>
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="/gestion/script_gestion.js"></script>
 </body>
 </html>

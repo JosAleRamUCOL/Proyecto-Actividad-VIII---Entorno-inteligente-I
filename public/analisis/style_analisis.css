@@ -1,0 +1,552 @@
+/* /analisis/style.css */
+
+/* Contenedor Principal de la Base de Datos
+   Hereda el estilo de .welcome-container pero más ancho
+   para la tabla y los gráficos.
+*/
+.database-container {
+  max-width: 1200px; /* Más ancho que los 900px de welcome-container */
+  margin: 30px auto;
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.8s ease;
+}
+
+/* Encabezado de la página */
+.database-header {
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e9ecef;
+  padding-bottom: 20px;
+}
+
+.database-header h2 {
+  color: #2d3748; /* Mismo color que h1 */
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.database-subtitle {
+  color: #718096; /* Mismo color que .subtitle */
+  font-size: 1.1rem;
+  font-style: italic;
+}
+
+/* Sección de Conexión MQTT
+   Estilo similar a .info-section
+*/
+.connection-section {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  padding: 25px;
+  border-radius: 15px;
+  margin-bottom: 30px;
+  border-left: 5px solid #667eea; /* Acento de color principal */
+}
+
+.connection-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.connection-info h3 {
+  color: #667eea; /* Color principal */
+  font-size: 1.5rem;
+  margin: 0;
+}
+
+.connection-info p {
+  font-size: 1rem;
+  color: #333;
+  margin: 0;
+}
+
+.status-disconnected {
+  color: #e53e3e; /* Rojo para desconectado */
+  font-weight: bold;
+}
+
+.status-connected {
+  color: #38a169; /* Verde para conectado */
+  font-weight: bold;
+}
+
+/* Estilo de Botón Principal (Conectar)
+   Basado en el .nav-link.active
+*/
+.btn-connect, .btn-search, .btn-save, .btn-plot, .btn-upload, .btn-delete, .btn-edit {
+  padding: 10px 20px;
+  color: white;
+  background-color: #667eea;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: inline-block;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-connect:hover, .btn-search:hover, .btn-save:hover, .btn-plot:hover, .btn-upload:hover, .btn-delete:hover, .btn-edit:hover {
+  background-color: #764ba2; /* Color secundario del degradado */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+/* Pestañas (Tabs)
+   Estilo basado en el .nav-menu
+*/
+.tabs-container {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e9ecef;
+}
+
+.tab {
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #333;
+  text-decoration: none;
+  border-radius: 8px 8px 0 0; /* Bordes redondeados solo arriba */
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+.tab:hover {
+  background-color: #f5f7fa;
+  color: #667eea;
+}
+
+.tab.active {
+  background-color: #667eea;
+  color: white;
+  margin-bottom: -2px; /* Alinea con el borde inferior */
+}
+
+/* Contenido de las pestañas */
+.tab-content {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+/* Filtros y Búsqueda */
+.filters-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  background: #f5f7fa;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.filter-options {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+/* Estilo para inputs y selects */
+#searchInput, #dateFilter, #sortBy {
+  padding: 10px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+#searchInput {
+  width: 100%;
+  min-width: 200px;
+}
+
+#searchInput:focus, #dateFilter:focus, #sortBy:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+/* Estilo de la Tabla */
+.table-container {
+  overflow-x: auto; /* Permite scroll horizontal en móviles */
+  margin-bottom: 20px;
+}
+
+#dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+#dataTable th, #dataTable td {
+  padding: 15px;
+  border-bottom: 1px solid #e9ecef;
+  vertical-align: middle;
+}
+
+#dataTable th {
+  background: #f5f7fa;
+  color: #667eea;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+#dataTable tbody tr:hover {
+  background-color: #f5f7fa;
+}
+
+/* Botones de acción en la tabla */
+#dataTable td .btn-edit {
+  background-color: #f6ad55; /* Naranja para editar */
+  padding: 5px 10px;
+  font-size: 0.85rem;
+  margin-right: 5px;
+}
+#dataTable td .btn-edit:hover { background-color: #ed8936; }
+
+#dataTable td .btn-delete {
+  background-color: #f56565; /* Rojo para borrar */
+  padding: 5px 10px;
+  font-size: 0.85rem;
+}
+#dataTable td .btn-delete:hover { background-color: #e53e3e; }
+
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+#pageInfo {
+  color: #718096;
+  font-weight: 500;
+}
+
+.btn-pagination {
+  padding: 8px 15px;
+  background: #f5f7fa;
+  color: #667eea;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-pagination:hover {
+  background: #e9ecef;
+}
+
+.btn-pagination:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Sección de Exportación */
+.export-section {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-export {
+  padding: 10px 20px;
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+  border-radius: 8px;
+  font-weight: 600;
+  margin: 0 10px;
+  transition: all 0.3s ease;
+}
+
+.btn-export:hover {
+  background: #667eea;
+  color: white;
+  transform: translateY(-2px);
+}
+
+/* Pestaña de Gráficos */
+.charts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.chart-row .full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-card {
+  background: #f5f7fa;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: relative; 
+  height: 400px; 
+}
+
+.chart-card h3 {
+  text-align: center;
+  color: #2d3748;
+  margin-bottom: 20px;
+  font-size: 1.3rem;
+}
+
+/* Pestaña de Subir Datos */
+.upload-container {
+  text-align: center;
+  padding: 30px;
+  background: #f5f7fa;
+  border-radius: 15px;
+}
+
+.upload-container h3 {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.upload-container p {
+  color: #718096;
+  margin-bottom: 30px;
+}
+
+.upload-area {
+  border: 3px dashed #667eea;
+  border-radius: 15px;
+  padding: 40px;
+  background: white;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.upload-area.dragover {
+  background-color: #e9ecef;
+}
+
+.upload-placeholder p {
+  font-size: 1.1rem;
+  color: #718096;
+  margin-bottom: 20px;
+}
+
+/* Modal de Edición */
+.modal {
+  display: none; /* Oculto por defecto */
+  position: fixed;
+  z-index: 2000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 10% auto;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  animation: fadeIn 0.5s ease;
+}
+
+.modal-content h3 {
+  color: #2d3748;
+  text-align: center;
+  font-size: 1.8rem;
+  margin-bottom: 25px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover, .close:focus {
+  color: #2d3748;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #718096;
+  font-weight: 600;
+}
+
+.form-group input[type="number"], .form-group input[type="text"] {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 1rem;
+  color: #333;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.form-group input[type="number"]:focus, .form-group input[type="text"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-top: 30px;
+}
+
+.btn-cancel {
+  padding: 10px 20px;
+  font-weight: 600;
+  background-color: #f5f7fa;
+  color: #718096;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-cancel:hover { background-color: #e9ecef; }
+
+/* Vista previa de subida */
+.upload-preview {
+  margin-top: 20px;
+  text-align: left;
+}
+.preview-table {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background: white;
+}
+/* Reutilizamos el estilo de la tabla */
+#previewTable table {
+  width: 100%;
+  border-collapse: collapse;
+}
+#previewTable th, #previewTable td {
+  padding: 10px;
+  border-bottom: 1px solid #e9ecef;
+}
+#previewTable th {
+  background: #f5f7fa;
+  color: #667eea;
+  font-size: 0.9rem;
+}
+
+
+/* Ajustes Responsivos Adicionales */
+@media (max-width: 768px) {
+  .database-container {
+    margin: 20px;
+    padding: 25px;
+  }
+  .connection-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .filters-section {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .filter-options {
+    flex-direction: column;
+  }
+  .search-box {
+    flex-direction: column;
+  }
+  .chart-row {
+    grid-template-columns: 1fr;
+  }
+  .tabs-container {
+    flex-direction: column;
+    gap: 2px;
+  }
+  .tab {
+    border-radius: 8px;
+  }
+  .tab.active {
+    margin-bottom: 0;
+  }
+  .modal-content {
+    margin: 20% auto;
+    width: 90%;
+    padding: 20px;
+  }
+  .form-actions {
+    flex-direction: column;
+  }
+  .btn-save, .btn-cancel {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .database-header h2 {
+    font-size: 1.5rem;
+  }
+  .database-subtitle {
+    font-size: 1rem;
+  }
+  .connection-info h3 {
+    font-size: 1.2rem;
+  }
+  .tab {
+    padding: 10px 15px;
+    font-size: 1rem;
+  }
+  .chart-card {
+    padding: 15px;
+  }
+}

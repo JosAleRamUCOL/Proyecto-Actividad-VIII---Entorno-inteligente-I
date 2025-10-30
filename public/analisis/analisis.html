@@ -1,0 +1,180 @@
+<!-- analisis.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Base de Datos - Sistema EITD</title>
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="/main/style.css">
+    <link rel="stylesheet" href="/analisis/style.css">
+</head>
+<body>
+    <!-- Menú de navegación superior -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <div class="nav-logo">Sistema EITD</div>
+            <ul class="nav-menu">
+                <li><a href="/success" class="nav-link">Inicio</a></li>
+                <li><a href="/basedatos" class="nav-link active">Base de datos</a></li>
+                <li><a href="/monitoreo" class="nav-link">Monitoreo</a></li>
+                <li><a href="/gestion" class="nav-link">Gestión</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="database-container">
+        <div class="database-header">
+            <h2>Base de Datos - Registros del Carro</h2>
+            <p class="database-subtitle">Gestión y visualización de datos en tiempo real</p>
+        </div>
+        
+        <!-- Sección de conexión MQTT -->
+        <div class="connection-section">
+            <div class="connection-info">
+                <h3>Conexión MQTT</h3>
+                <p>Estado: <span id="mqttStatus" class="status-disconnected">Desconectado</span></p>
+                <p>Tópico suscrito: <strong>carro/data</strong></p>
+                <button id="connectMqtt" class="btn-connect">Conectar al Broker</button>
+            </div>
+        </div>
+        
+        <!-- Pestañas para alternar entre Tabla, Gráficos y Subir Datos -->
+        <div class="tabs-container">
+            <button class="tab active" data-tab="data-tab">Datos en Tabla</button>
+            <button class="tab" data-tab="charts-tab">Gráficos</button>
+            <button class="tab" data-tab="upload-tab">Subir Datos</button>
+        </div>
+        
+        <!-- Contenido de la pestaña Datos en Tabla -->
+        <div id="data-tab" class="tab-content active">
+            <!-- Filtros y Búsqueda -->
+            <div class="filters-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="Buscar en registros...">
+                    <button id="searchBtn" class="btn-search">Buscar</button>
+                </div>
+                <div class="filter-options">
+                    <select id="dateFilter">
+                        <option value="">Filtrar por fecha</option>
+                        <option value="today">Hoy</option>
+                        <option value="week">Última semana</option>
+                        <option value="month">Último mes</option>
+                    </select>
+                    <select id="sortBy">
+                        <option value="timestamp-desc">Más recientes primero</option>
+                        <option value="timestamp-asc">Más antiguos primero</option>
+                        <option value="temperature-desc">Temperatura (alta a baja)</option>
+                        <option value="temperature-asc">Temperatura (baja a alta)</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Tabla de datos -->
+            <div class="table-container">
+                <table id="dataTable">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha/Hora</th>
+                            <th>Latitud</th>
+                            <th>Longitud</th>
+                            <th>Temperatura (°C)</th>
+                            <th>Presión (hPa)</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <!-- Los datos se cargarán dinámicamente -->
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Paginación -->
+            <div class="pagination">
+                <button id="prevPage" class="btn-pagination">Anterior</button>
+                <span id="pageInfo">Página 1 de 1</span>
+                <button id="nextPage" class="btn-pagination">Siguiente</button>
+            </div>
+            
+            <!-- Exportación -->
+            <div class="export-section">
+                <button id="exportCsv" class="btn-export">Exportar a CSV</button>
+                <button id="exportJson" class="btn-export">Exportar a JSON</button>
+            </div>
+        </div>
+        
+        <!-- Contenido de la pestaña Gráficos -->
+        <div id="charts-tab" class="tab-content">
+            <div class="charts-container">
+                <div class="chart-row">
+                    <div class="chart-card">
+                        <h3>Temperatura vs. Tiempo</h3>
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Presión vs. Tiempo</h3>
+                        <canvas id="pressureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Contenido de la pestaña Subir Datos -->
+        <div id="upload-tab" class="tab-content">
+            <div class="upload-container">
+                <h3>Subir Archivo JSON para Graficar</h3>
+                <p>Suba un archivo JSON con datos de ubicación, temperatura y presión para visualizarlos en los gráficos.</p>
+                
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-placeholder">
+                        <p>Arrastre un archivo JSON aquí o haga clic para seleccionar</p>
+                        <input type="file" id="jsonFile" accept=".json" style="display: none;">
+                        <button id="selectFile" class="btn-upload">Seleccionar Archivo</button>
+                    </div>
+                </div>
+                
+                <div id="uploadPreview" class="upload-preview" style="display: none;">
+                    <h4>Vista previa de datos</h4>
+                    <div id="previewTable" class="preview-table"></div>
+                    <button id="plotData" class="btn-plot">Graficar Datos</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para editar registro -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Editar Registro</h3>
+            <form id="editForm">
+                <input type="hidden" id="editId">
+                <div class="form-group">
+                    <label for="editLat">Latitud:</label>
+                    <input type="number" step="any" id="editLat" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLng">Longitud:</label>
+                    <input type="number" step="any" id="editLng" required>
+                </div>
+                <div class="form-group">
+                    <label for="editTemperature">Temperatura (°C):</label>
+                    <input type="number" step="any" id="editTemperature" required>
+                </div>
+                <div class="form-group">
+                    <label for="editPressure">Presión (hPa):</label>
+                    <input type="number" step="any" id="editPressure" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-save">Guardar Cambios</button>
+                    <button type="button" class="btn-cancel">Cancelar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/analisis/script_analisis.js"></script>
+</body>
+</html>

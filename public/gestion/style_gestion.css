@@ -1,0 +1,539 @@
+/* Estilos específicos para la página de Gestión */
+
+.controller {
+    max-width: 700px;
+    margin: 30px auto;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.8s ease;
+}
+
+.controller-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 3px solid #f0f0f0;
+}
+
+.controller-header h2 {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+.controller-subtitle {
+    color: #718096;
+    font-size: 1rem;
+    font-style: italic;
+}
+
+/* Sección de conexión */
+.connection-section {
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
+}
+
+#topicInput {
+    flex: 1;
+    min-width: 250px;
+    padding: 12px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+#topicInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.btn-connect {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-connect:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-connect:active {
+    transform: translateY(0);
+}
+
+/* Estados de conexión */
+#connectionStatus {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.status-disconnected {
+    background: #fee;
+    color: #c53030;
+}
+
+.status-connecting {
+    background: #fef5e7;
+    color: #d68910;
+}
+
+.status-connected {
+    background: #e6ffed;
+    color: #22543d;
+}
+
+.status-error {
+    background: #fee;
+    color: #c53030;
+}
+
+/* Contenedor del joystick */
+.joystick-container {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 40px;
+    border-radius: 15px;
+    text-align: center;
+}
+
+.joystick-container h3 {
+    color: #667eea;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Joystick */
+#joystick {
+    width: 250px;
+    height: 250px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    position: relative;
+    margin: 20px auto;
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+    border: 6px solid white;
+}
+
+#joystickKnob {
+    width: 60px;
+    height: 60px;
+    background: white;
+    border-radius: 50%;
+    position: absolute;
+    left: 90px;
+    top: 90px;
+    cursor: move;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    border: 4px solid #667eea;
+}
+
+#joystickKnob:hover {
+    transform: scale(1.15);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+}
+
+#joystickKnob:active {
+    transform: scale(1.1);
+}
+
+.joystick-help {
+    color: #718096;
+    font-size: 0.95rem;
+    margin-top: 25px;
+    font-style: italic;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .controller {
+        margin: 20px;
+        padding: 30px;
+    }
+
+    .controller-header h2 {
+        font-size: 1.6rem;
+    }
+
+    .connection-section {
+        flex-direction: column;
+    }
+
+    #topicInput {
+        width: 100%;
+    }
+
+    .joystick-container {
+        padding: 30px 20px;
+    }
+
+    #joystick {
+        width: 220px;
+        height: 220px;
+    }
+
+    #joystickKnob {
+        width: 55px;
+        height: 55px;
+        left: 82.5px;
+        top: 82.5px;
+    }
+}
+
+@media (max-width: 480px) {
+    .controller {
+        margin: 10px;
+        padding: 20px;
+    }
+
+    .controller-header h2 {
+        font-size: 1.4rem;
+    }
+
+    .joystick-container {
+        padding: 25px 15px;
+    }
+
+    .joystick-container h3 {
+        font-size: 1.3rem;
+    }
+
+    #joystick {
+        width: 200px;
+        height: 200px;
+        border: 5px solid white;
+    }
+
+    #joystickKnob {
+        width: 50px;
+        height: 50px;
+        left: 75px;
+        top: 75px;
+        border: 3px solid #667eea;
+    }
+
+    .joystick-help {
+        font-size: 0.9rem;
+    }
+}
+/* Estilos para la sección del mapa */
+.map-section {
+    margin-top: 40px;
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.map-section h3 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #667eea;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.map-container {
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+#map {
+    flex: 1;
+    min-width: 300px;
+    height: 400px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.location-info {
+    flex: 0 0 300px;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.location-info h4 {
+    color: #667eea;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.location-info p {
+    margin-bottom: 15px;
+    font-size: 1rem;
+    color: #4a5568;
+}
+
+.location-info strong {
+    color: #2d3748;
+}
+
+.btn-send {
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    width: 100%;
+    margin-top: 10px;
+}
+
+.btn-send:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.btn-send:active {
+    transform: translateY(0);
+}
+
+/* Estilos adicionales para las pestañas */
+        .tabs-container {
+            display: flex;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #718096;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab:hover:not(.active) {
+            color: #4a5568;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Estilos para la sección del mapa */
+        .map-container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        #map {
+            flex: 1;
+            min-width: 300px;
+            height: 400px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        
+        .location-info {
+            flex: 0 0 300px;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        .location-info h4 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .location-info p {
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: #4a5568;
+        }
+        
+        .location-info strong {
+            color: #2d3748;
+        }
+        
+        .btn-send {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn-send:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-send:active {
+            transform: translateY(0);
+        }
+        
+        /* Estilos para la sección de seguimiento de línea */
+        .line-tracking-container {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .line-tracking-container h3 {
+            color: #667eea;
+            margin-bottom: 30px;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .tracking-toggle {
+            display: inline-flex;
+            align-items: center;
+            background: #f8f9fa;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .toggle-label {
+            margin-right: 15px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+        
+        .toggle-btn {
+            position: relative;
+            width: 80px;
+            height: 40px;
+            background: #e2e8f0;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            outline: none;
+        }
+        
+        .toggle-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .toggle-btn::after {
+            content: '';
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            width: 30px;
+            height: 30px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .toggle-btn.active::after {
+            left: calc(100% - 35px);
+        }
+        
+        .toggle-status {
+            margin-top: 20px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        
+        .status-off {
+            background: #fed7d7;
+            color: #c53030;
+        }
+        
+        .status-on {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .map-container {
+                flex-direction: column;
+            }
+            
+            .location-info {
+                flex: 1;
+            }
+            
+            .tab {
+                padding: 12px 15px;
+                font-size: 0.9rem;
+            }
+        }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .map-container {
+        flex-direction: column;
+    }
+
+    .location-info {
+        flex: 1;
+    }
+}
