@@ -6,9 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Base de Datos - Sistema EITD</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script> 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="/main/style.css">
-    <link rel="stylesheet" href="/analisis/style.css">
+    <link rel="stylesheet" href="/analisis/style_analisis.css">
 </head>
 <body>
     <!-- Menú de navegación superior -->
@@ -28,16 +29,6 @@
         <div class="database-header">
             <h2>Base de Datos - Registros del Carro</h2>
             <p class="database-subtitle">Gestión y visualización de datos en tiempo real</p>
-        </div>
-        
-        <!-- Sección de conexión MQTT -->
-        <div class="connection-section">
-            <div class="connection-info">
-                <h3>Conexión MQTT</h3>
-                <p>Estado: <span id="mqttStatus" class="status-disconnected">Desconectado</span></p>
-                <p>Tópico suscrito: <strong>carro/data</strong></p>
-                <button id="connectMqtt" class="btn-connect">Conectar al Broker</button>
-            </div>
         </div>
         
         <!-- Pestañas para alternar entre Tabla, Gráficos y Subir Datos -->
@@ -76,10 +67,10 @@
                 <table id="dataTable">
                     <thead>
                         <tr>
-                            <th>ID</th>
                             <th>Fecha/Hora</th>
                             <th>Latitud</th>
                             <th>Longitud</th>
+                            <th>Altitud</th>
                             <th>Temperatura (°C)</th>
                             <th>Presión (hPa)</th>
                             <th>Acciones</th>
@@ -158,6 +149,10 @@
                 <div class="form-group">
                     <label for="editLng">Longitud:</label>
                     <input type="number" step="any" id="editLng" required>
+                </div>
+                <div class="form-group">
+                    <label for="editLng">Altitud:</label>
+                    <input type="number" step="any" id="editAlt" required>
                 </div>
                 <div class="form-group">
                     <label for="editTemperature">Temperatura (°C):</label>

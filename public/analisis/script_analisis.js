@@ -13,103 +13,32 @@ document.querySelectorAll('.tab').forEach(tab => {
 });
 
 // --- Variables globales ---
-let mqttClient = null;
 let allData = [];
 let filteredData = [];
 let currentPage = 1;
 const itemsPerPage = 10;
 
-// --- Conexión MQTT ---
-const connectMqttBtn = document.getElementById('connectMqtt');
-const mqttStatus = document.getElementById('mqttStatus');
+// --- AÑADIR: Conexión por WebSocket (Socket.IO) ---
+const socket = io(); // Se conecta automáticamente al servidor
 
-connectMqttBtn.addEventListener('click', connectToMqtt);
+socket.on('connect', () => {
+    console.log('✅ Conectado al servidor vía WebSocket');
+});
 
-function connectToMqtt() {
-    if (mqttClient && mqttClient.connected) {
-        mqttClient.end();
-        return;
+// Escucha el evento 'newData' que el servidor emite
+socket.on('newData', (data) => {
+    console.log('📬 Nuevos datos recibidos desde el servidor:', data);
+
+    // Opcional: podrías agregar 'data' directamente a 'allData'
+    // pero recargar es más simple y asegura consistencia.
+    if (currentPage === 1) {
+         loadDataFromServer(); // Recarga los datos de la tabla si estás en la pág 1
     }
+});
 
-    const clientId = 'mqtt_analisis_' + Math.random().toString(16).substr(2, 8);
-    const options = {
-        clientId: clientId,
-        keepalive: 60,
-        reconnectPeriod: 1000,
-    };
-
-    mqttStatus.textContent = 'Conectando...';
-    mqttStatus.className = 'status-connecting';
-    connectMqttBtn.textContent = 'Conectando...';
-            
-    mqttClient = mqtt.connect('ws://test.mosquitto.org:8080', options);
-
-    mqttClient.on('connect', () => {
-        mqttStatus.textContent = 'Conectado';
-        mqttStatus.className = 'status-connected';
-        connectMqttBtn.textContent = 'Desconectar';
-        console.log('Conectado al broker MQTT');
-        
-        mqttClient.subscribe('carro/data', (err) => {
-            if (!err) {
-                console.log('Suscrito al tópico carro/data');
-            }
-        });
-    });
-
-    mqttClient.on('message', async (topic, message) => {
-        if (topic === 'carro/data') {
-            try {
-                const data = JSON.parse(message.toString());
-                console.log('Datos MQTT recibidos:', data);
-                
-                // Guardar en MongoDB a través de la API
-                await saveMqttDataToDatabase(data);
-                
-                // Recargar datos para mostrar el nuevo registro
-                await loadDataFromServer();
-            } catch (error) {
-                console.error('Error al procesar mensaje MQTT:', error);
-            }
-        }
-    });
-
-    mqttClient.on('close', () => {
-        mqttStatus.textContent = 'Desconectado';
-        mqttStatus.className = 'status-disconnected';
-        connectMqttBtn.textContent = 'Conectar al Broker';
-        console.log('Desconectado del broker MQTT');
-    });
-
-    mqttClient.on('error', (err) => {
-        console.error('Error de conexión MQTT:', err);
-        mqttStatus.textContent = 'Error de conexión';
-        mqttStatus.className = 'status-error';
-        connectMqttBtn.textContent = 'Conectar al Broker';
-    });
-}
-
-// --- Guardar datos MQTT en MongoDB ---
-async function saveMqttDataToDatabase(data) {
-    try {
-        const response = await fetch('/api/mqtt/data', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al guardar datos MQTT');
-        }
-
-        const result = await response.json();
-        console.log('Datos guardados en MongoDB:', result);
-    } catch (error) {
-        console.error('Error al guardar datos MQTT en la base de datos:', error);
-    }
-}
+socket.on('disconnect', () => {
+    console.log('🛑 Desconectado del servidor WebSocket');
+});
 
 // --- Cargar datos desde MongoDB ---
 async function loadDataFromServer() {
@@ -161,10 +90,10 @@ function renderTable() {
         const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString();
         
         row.innerHTML = `
-            <td>${item._id ? item._id.substring(0, 8) + '...' : 'N/A'}</td>
             <td>${formattedDate}</td>
             <td>${item.lat ? item.lat.toFixed(6) : 'N/A'}</td>
             <td>${item.lng ? item.lng.toFixed(6) : 'N/A'}</td>
+            <td>${item.alt ? item.alt.toFixed(6) : 'N/A'}</td>
             <td>${item.temperature ? item.temperature.toFixed(2) : 'N/A'}</td>
             <td>${item.pressure ? item.pressure.toFixed(2) : 'N/A'}</td>
             <td>
@@ -242,6 +171,7 @@ async function editRecord(id) {
         document.getElementById('editId').value = record._id;
         document.getElementById('editLat').value = record.lat || '';
         document.getElementById('editLng').value = record.lng || '';
+        document.getElementById('editAlt').value = record.alt || '';
         document.getElementById('editTemperature').value = record.temperature || '';
         document.getElementById('editPressure').value = record.pressure || '';
         
@@ -299,6 +229,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
     const id = document.getElementById('editId').value;
     const lat = parseFloat(document.getElementById('editLat').value);
     const lng = parseFloat(document.getElementById('editLng').value);
+    const alt = parseFloat(document.getElementById('editAlt').value);
     const temperature = parseFloat(document.getElementById('editTemperature').value);
     const pressure = parseFloat(document.getElementById('editPressure').value);
     
@@ -311,6 +242,7 @@ document.getElementById('editForm').addEventListener('submit', async (e) => {
             body: JSON.stringify({
                 lat,
                 lng,
+                alt,
                 temperature,
                 pressure
             })
@@ -341,7 +273,7 @@ function exportToCsv() {
         return;
     }
     
-    const headers = ['ID', 'Fecha/Hora', 'Latitud', 'Longitud', 'Temperatura (°C)', 'Presión (hPa)', 'Dirección'];
+    const headers = ['ID', 'Fecha/Hora', 'Latitud', 'Longitud', 'Altitud', 'Temperatura (°C)', 'Presión (hPa)', 'Dirección'];
     const csvContent = [
         headers.join(','),
         ...filteredData.map(item => [
@@ -349,6 +281,7 @@ function exportToCsv() {
             new Date(item.timestamp).toISOString(),
             item.lat || '',
             item.lng || '',
+            item.alt || '',
             item.temperature || '',
             item.pressure || '',
             item.direction || ''

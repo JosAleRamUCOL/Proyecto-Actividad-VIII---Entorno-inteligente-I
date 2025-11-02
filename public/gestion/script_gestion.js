@@ -9,6 +9,11 @@ document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.add('active');
         const tabId = tab.getAttribute('data-tab');
         document.getElementById(tabId).classList.add('active');
+        if (tabId === 'map-tab' && map) {
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 100);
+        }
     });
 });
 
@@ -100,7 +105,7 @@ function stopDragging() {
         joystickKnob.style.left = '90px';
         joystickKnob.style.top = '90px';
                 
-        publishMessage({ direction: 'stop' });
+        publishMessage({ "direction": "stop" });
     }
 }
 
@@ -130,17 +135,17 @@ function drag(e) {
     joystickKnob.style.top = `${90 + limitedY}px`;
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        if (deltaX > 0) publishMessage({ direction: 'right' });
-        else publishMessage({ direction: 'left' });
+        if (deltaX > 0) publishMessage({ "direction": "right" });
+        else publishMessage({ "direction": "left" });
     } else {
-        if (deltaY > 0) publishMessage({ direction: 'down' });
-        else publishMessage({ direction: 'up' });
+        if (deltaY > 0) publishMessage({ "direction": "down" });
+        else publishMessage({ "direction": "up" });
     }
 }
 
 // --- Lógica del Mapa Leaflet ---
 // Inicializar el mapa
-let map = L.map('map').setView([-17.7833, -63.1821], 13); // Coordenadas de ejemplo (Santa Cruz, Bolivia)
+let map = L.map('map').setView([19.2433, -103.725], 14); // Coordenadas de ejemplo (Santa Cruz, Bolivia)
 
 // Añadir capa de OpenStreetMap
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -151,7 +156,7 @@ let selectedMarker = null;
 let selectedLatLng = null;
 
 // Crear un marcador inicial
-selectedMarker = L.marker([-17.7833, -63.1821], {
+selectedMarker = L.marker([19.2433, -103.725], {
     draggable: true
 }).addTo(map);
         
@@ -250,7 +255,7 @@ document.getElementById('sendLocation').addEventListener('click', function() {
         orientation
     };
             
-    publishMessage(locationMessage, 'carro/gps');
+    publishMessage(locationMessage, 'carro/control');
             
     // Mostrar confirmación
     alert('Ubicación enviada correctamente al tópico carro/gps');
@@ -264,21 +269,18 @@ let lineTrackingActive = false;
 lineTrackingToggle.addEventListener('click', function() {
     lineTrackingActive = !lineTrackingActive;
             
-    // Actualizar la apariencia del botón
     if (lineTrackingActive) {
         lineTrackingToggle.classList.add('active');
         trackingStatus.textContent = 'ACTIVADO';
         trackingStatus.className = 'toggle-status status-on';
                 
-        // Enviar mensaje MQTT con estado true
-        publishMessage({direction : 1 });
+        publishMessage({ "lineTracking": true });
     } else {
         lineTrackingToggle.classList.remove('active');
         trackingStatus.textContent = 'DESACTIVADO';
         trackingStatus.className = 'toggle-status status-off';
                 
-        // Enviar mensaje MQTT con estado false
-        publishMessage({direction : 0 });
+        publishMessage({ "lineTracking": false });
     }
             
     console.log('Seguimiento de línea:', lineTrackingActive);

@@ -1,5 +1,4 @@
 // --- Variables globales ---
-let client = null;
 let stats = {
     tempMin: null,
     tempMax: null,
@@ -7,134 +6,125 @@ let stats = {
     pressMax: null,
     messageCount: 0
 };
+let map = null;
+let robotMarker = null;
+let autoCenterCheck = true;
+let initialCoords = [19.2433, -103.725]; // Coordenadas de Colima (ejemplo)
 
 // --- Referencias DOM ---
-const connectionStatus = document.getElementById('connectionStatus');
-const topicInput = document.getElementById('topicInput');
-const connectBtn = document.getElementById('connectBtn');
 const temperatureValue = document.getElementById('temperatureValue');
 const pressureValue = document.getElementById('pressureValue');
 const tempTimestamp = document.getElementById('tempTimestamp');
 const pressTimestamp = document.getElementById('pressTimestamp');
 const messageLog = document.getElementById('messageLog');
 const clearLogBtn = document.getElementById('clearLogBtn');
-
-// URL del Broker MQTT
-const brokerUrl = 'ws://test.mosquitto.org:8080';
+const autoCenterElement = document.getElementById('autoCenterCheck');
 
 // --- Event Listeners ---
-connectBtn.addEventListener('click', toggleConnection);
 clearLogBtn.addEventListener('click', clearLog);
+autoCenterElement.addEventListener('change', (e) => {
+    autoCenterCheck = e.target.checked;
+});
 
-// --- Funciones MQTT ---
-function toggleConnection() {
-    if (client && client.connected) {
-        disconnectMQTT();
+// --- Conexión Socket.IO ---
+const socket = io();
+
+socket.on('connect', () => {
+    console.log('✅ Conectado al servidor vía WebSocket');
+    addLogMessage('Conectado al servidor', 'success');
+});
+
+socket.on('disconnect', () => {
+    console.warn('🛑 Desectado del servidor WebSocket');
+    addLogMessage('Desconectado del servidor', 'error');
+});
+
+// --- Escuchar el evento 'newData' del servidor ---
+socket.on('newData', (data) => {
+    handleNewData(data);
+});
+
+// --- Inicialización ---
+document.addEventListener('DOMContentLoaded', () => {
+    initializeMap();
+});
+
+// --- Lógica del Mapa ---
+function initializeMap() {
+    map = L.map('map').setView(initialCoords, 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(map);
+
+    addLogMessage('Mapa inicializado', 'info');
+}
+
+function updateMap(lat, lng) {
+    if (lat === null || lng === null || lat === 0 || lng === 0) {
+        return; // Ignorar coordenadas nulas o (0,0)
+    }
+
+    const newPosition = [lat, lng];
+
+    if (!robotMarker) {
+        // Crear el marcador si no existe
+        robotMarker = L.marker(newPosition).addTo(map);
+        robotMarker.bindPopup("Posición actual del Robot").openPopup();
+        addLogMessage(`Posición inicial del robot: ${lat}, ${lng}`, 'data');
     } else {
-        connectMQTT();
+        // Mover el marcador existente
+        robotMarker.setLatLng(newPosition);
+    }
+
+    // Centrar el mapa si la opción está activa
+    if (autoCenterCheck) {
+        map.setView(newPosition, 16); // Centra y ajusta el zoom
     }
 }
 
-function connectMQTT() {
-    const topic = topicInput.value.trim();
-    if (!topic) {
-        alert('Por favor ingresa un tema MQTT válido');
-        return;
-    }
-
-    const clientId = 'mqtt_monitor_' + Math.random().toString(16).substr(2, 8);
-    const options = {
-        clientId: clientId,
-        keepalive: 60,
-        reconnectPeriod: 1000,
-    };
-
-    connectionStatus.textContent = '● Conectando...';
-    connectionStatus.className = 'status-connecting';
-            
-    client = mqtt.connect(brokerUrl, options);
-
-    client.on('connect', () => {
-        connectionStatus.textContent = '● Conectado';
-        connectionStatus.className = 'status-connected';
-        connectBtn.textContent = 'Desconectar';
-        connectBtn.classList.add('btn-disconnect');
-                
-        // Suscribirse al topic
-        client.subscribe(topic, (err) => {
-            if (err) {
-                console.error('Error al suscribirse:', err);
-                addLogMessage('Error al suscribirse al tema: ' + topic, 'error');
-            } else {
-                console.log('Suscrito a:', topic);
-                addLogMessage('Suscrito exitosamente al tema: ' + topic, 'success');
-            }
-        });
-    });
-
-    client.on('message', (topic, message) => {
-        handleMessage(message.toString());
-    });
-
-    client.on('close', () => {
-        connectionStatus.textContent = '● Desconectado';
-        connectionStatus.className = 'status-disconnected';
-        connectBtn.textContent = 'Conectar al Broker';
-        connectBtn.classList.remove('btn-disconnect');
-    });
-
-    client.on('error', (err) => {
-        console.error('Error de conexión MQTT:', err);
-        connectionStatus.textContent = '● Error de conexión';
-        connectionStatus.className = 'status-error';
-        addLogMessage('Error de conexión: ' + err.message, 'error');
-    });
-}
-
-function disconnectMQTT() {
-    if (client) {
-        client.end();
-        addLogMessage('Desconectado del broker', 'info');
-    }
-}
-
-// --- Manejo de mensajes ---
-function handleMessage(message) {
+// --- Manejo de datos ---
+function handleNewData(data) {
     try {
-        const data = JSON.parse(message);
-        const timestamp = new Date().toLocaleTimeString('es-MX');
-                
-        // Actualizar temperatura
+        const timestamp = new Date(data.timestamp || Date.now()).toLocaleTimeString('es-MX');
+
+        // 1. Actualizar Temperatura
         if (data.temperature !== undefined) {
             const temp = parseFloat(data.temperature);
             temperatureValue.textContent = temp.toFixed(2);
             tempTimestamp.textContent = timestamp;
             updateStats('temp', temp);
         }
-                
-        // Actualizar presión
+
+        // 2. Actualizar Presión
         if (data.pressure !== undefined) {
             const press = parseFloat(data.pressure);
             pressureValue.textContent = press.toFixed(2);
             pressTimestamp.textContent = timestamp;
             updateStats('press', press);
         }
-                
-        // Incrementar contador
+
+        // 3. Actualizar Mapa
+        if (data.lat !== undefined && data.lng !== undefined) {
+            updateMap(parseFloat(data.lat), parseFloat(data.lng));
+        }
+
+        // 4. Actualizar Estadísticas y Log
         stats.messageCount++;
         document.getElementById('messageCount').textContent = stats.messageCount;
         document.getElementById('lastUpdate').textContent = timestamp;
-        
+
         // Agregar al log
-        addLogMessage(`Temp: ${data.temperature}°C, Presión: ${data.pressure}hPa`, 'data');
-                
+        const logMsg = `Temp: ${data.temperature}°C, Presión: ${data.pressure}hPa, GPS: ${data.lat}, ${data.lng}`;
+        addLogMessage(logMsg, 'data');
+
     } catch (e) {
-        console.error('Error al parsear mensaje:', e);
-        addLogMessage('Mensaje recibido (formato inválido): ' + message, 'warning');
+        console.error('Error al procesar datos:', e);
+        addLogMessage('Datos recibidos (formato inválido)', 'warning');
     }
 }
 
-// --- Actualización de estadísticas ---
+// --- Actualización de estadísticas (Sin cambios) ---
 function updateStats(type, value) {
     if (type === 'temp') {
         if (stats.tempMin === null || value < stats.tempMin) {
@@ -157,7 +147,7 @@ function updateStats(type, value) {
     }
 }
 
-// --- Log de mensajes ---
+// --- Log de mensajes (Sin cambios) ---
 function addLogMessage(message, type = 'info') {
     const timestamp = new Date().toLocaleTimeString('es-MX');
     const logEntry = document.createElement('div');
