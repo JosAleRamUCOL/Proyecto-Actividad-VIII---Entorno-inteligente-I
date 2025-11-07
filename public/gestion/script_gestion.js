@@ -9,10 +9,20 @@ document.querySelectorAll('.tab').forEach(tab => {
         tab.classList.add('active');
         const tabId = tab.getAttribute('data-tab');
         document.getElementById(tabId).classList.add('active');
-        if (tabId === 'map-tab' && map) {
-            setTimeout(function() {
-                map.invalidateSize();
-            }, 100);
+        if (tabId === 'map-tab' && typeof map !== 'undefined') {
+            setTimeout(() => map.invalidateSize(), 100);
+        }
+
+        switch (tabId) {
+            case 'joystick-tab':
+                publishMessage("1");
+                break;
+            case 'map-tab':
+                publishMessage("3");
+                break;
+            case 'line-tracking-tab':
+                publishMessage("4");
+                break;
         }
     });
 });
@@ -74,7 +84,7 @@ function publishMessage(message, topic) {
             alert('Por favor ingresa un Tema MQTT');
             return;
         }
-        client.publish(publishTopic, JSON.stringify(message), { qos: 0, retain: false });
+        client.publish(publishTopic, message, { qos: 0, retain: false });
         console.log('Mensaje enviado:', message, 'al tópico:', publishTopic);
     } else {
         console.warn('No estás conectado al broker MQTT. Mensaje no enviado.');
@@ -105,7 +115,7 @@ function stopDragging() {
         joystickKnob.style.left = '90px';
         joystickKnob.style.top = '90px';
                 
-        publishMessage({ "direction": "stop" });
+        publishMessage("stop");
     }
 }
 
@@ -135,11 +145,11 @@ function drag(e) {
     joystickKnob.style.top = `${90 + limitedY}px`;
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
-        if (deltaX > 0) publishMessage({ "direction": "right" });
-        else publishMessage({ "direction": "left" });
+        if (deltaX > 0) publishMessage("right");
+        else publishMessage("left");
     } else {
-        if (deltaY > 0) publishMessage({ "direction": "down" });
-        else publishMessage({ "direction": "up" });
+        if (deltaY > 0) publishMessage("down");
+        else publishMessage("up");
     }
 }
 
@@ -243,22 +253,15 @@ document.getElementById('sendLocation').addEventListener('click', function() {
             
     const lat = parseFloat(document.getElementById('lat').textContent);
     const lng = parseFloat(document.getElementById('lng').textContent);
-    const gmtTime = document.getElementById('gmtTime').textContent;
-    const date = document.getElementById('date').textContent;
-    const orientation = parseFloat(document.getElementById('orientation').textContent);
-            
+
     const locationMessage = {
-        lat,
-        lng,
-        gmtTime,
-        date,
-        orientation
+        target_lat: lat,
+        target_lon: lng
     };
             
-    publishMessage(locationMessage, 'carro/control');
-            
-    // Mostrar confirmación
-    alert('Ubicación enviada correctamente al tópico carro/gps');
+    publishMessage(JSON.stringify(locationMessage), 'carro/control');
+
+    console.log("Ubicación enviada:", locationMessage);
 });
 
 // --- Lógica del Seguimiento de Línea ---
@@ -274,13 +277,13 @@ lineTrackingToggle.addEventListener('click', function() {
         trackingStatus.textContent = 'ACTIVADO';
         trackingStatus.className = 'toggle-status status-on';
                 
-        publishMessage({ "lineTracking": true });
+        publishMessage("2");
     } else {
         lineTrackingToggle.classList.remove('active');
         trackingStatus.textContent = 'DESACTIVADO';
         trackingStatus.className = 'toggle-status status-off';
                 
-        publishMessage({ "lineTracking": false });
+        publishMessage("0");
     }
             
     console.log('Seguimiento de línea:', lineTrackingActive);

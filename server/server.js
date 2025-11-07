@@ -248,9 +248,9 @@ function startMqttMiddleware() {
   });
 
   client.on('connect', () => {
-    client.subscribe('carro/data', (err) => {
+    client.subscribe('mi/carro/datos', (err) => {
         if (!err) {
-            console.log('Suscrito al tópico: carro/data');
+            console.log('Suscrito al tópico: mi/carro/datos');
         } else {
             console.error('Error en suscripción:', err);
         }
@@ -273,13 +273,13 @@ function startMqttMiddleware() {
 
       // Aquí asumimos que el mensaje tiene la estructura correcta
       const newData = new DataCarro({
-        lat: data.lat || 0, // Provee valores por defecto
-        lng: data.lng || 0,
-        alt: data.alt || 0,
-        temperature: data.temperature || 0,
-        pressure: data.pressure || 0,
-        direction: data.direction || null,
-        lineTracking: data.lineTracking || false,
+        lat: data.lat ? parseFloat(data.lat) : 0,
+        lng: data.lng ? parseFloat(data.lng) : 0,
+        alt: data.alt ? parseFloat(data.alt) : 0,
+        temperature: data.temperature ? parseFloat(data.temperature) : 0,
+        pressure: data.pressure ? parseFloat(data.pressure) : 0,
+        direction: data.modo || null,
+        lineTracking: data.linea ? (data.linea.L === 1 && data.linea.C === 1 && data.linea.R === 1) : false,
         timestamp: new Date()
       });
 
@@ -292,6 +292,7 @@ function startMqttMiddleware() {
 
     } catch (error) {
       console.error('❌ Error al procesar mensaje MQTT:', error);
+      console.error('Mensaje que falló:', message.toString());
     }
   });
 
